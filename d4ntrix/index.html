@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D4NTRIX - Artist Profile</title>
+    <title>D4NTRIX - Brazilian Phonk Artist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,9 +15,9 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', 'Geist', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #d4d4d4;
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,25 +31,38 @@
             text-align: center;
             margin-bottom: 60px;
             padding: 40px 20px;
-            border-bottom: 2px solid #0f3460;
+            border-bottom: 2px solid #404040;
         }
         
         h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            background: linear-gradient(135deg, #b0b0b0, #808080);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: 900;
             letter-spacing: 3px;
+            font-family: 'Geist', sans-serif;
         }
         
         .subtitle {
             font-size: 1.2rem;
-            color: #888;
+            color: #a0a0a0;
             font-weight: 300;
             letter-spacing: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .country-tag {
+            display: inline-block;
+            background: #3a3a3a;
+            color: #b0b0b0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            border: 1px solid #505050;
         }
         
         .profile-section {
@@ -59,58 +75,61 @@
         
         .bio {
             padding: 30px;
-            background: rgba(15, 52, 96, 0.5);
-            border-left: 4px solid #00d4ff;
+            background: rgba(60, 60, 60, 0.5);
+            border-left: 4px solid #808080;
             border-radius: 8px;
             line-height: 1.8;
             font-size: 1.05rem;
         }
         
         .bio h2 {
-            color: #00d4ff;
+            color: #a0a0a0;
             margin-bottom: 15px;
             font-size: 1.8rem;
+            font-family: 'Geist', sans-serif;
         }
         
         .spotify-embed {
             display: flex;
             justify-content: center;
             padding: 20px;
-            background: rgba(15, 52, 96, 0.3);
+            background: rgba(60, 60, 60, 0.3);
             border-radius: 8px;
         }
         
         .collaborations {
             margin-top: 60px;
             padding: 40px;
-            background: rgba(15, 52, 96, 0.4);
+            background: rgba(60, 60, 60, 0.4);
             border-radius: 8px;
-            border: 1px solid #0f3460;
+            border: 1px solid #404040;
         }
         
         .collaborations h2 {
-            color: #00d4ff;
+            color: #a0a0a0;
             margin-bottom: 30px;
             font-size: 2rem;
+            font-family: 'Geist', sans-serif;
         }
         
         .album-feature {
-            background: rgba(0, 212, 255, 0.1);
+            background: rgba(128, 128, 128, 0.1);
             padding: 25px;
             border-radius: 8px;
-            border-left: 4px solid #00d4ff;
+            border-left: 4px solid #808080;
             margin-bottom: 20px;
         }
         
         .album-title {
             font-size: 1.3rem;
-            color: #00d4ff;
+            color: #a0a0a0;
             margin-bottom: 10px;
             font-weight: 600;
+            font-family: 'Geist', sans-serif;
         }
         
         .album-info {
-            color: #aaa;
+            color: #909090;
             font-size: 0.95rem;
             line-height: 1.6;
         }
@@ -119,8 +138,8 @@
             margin-top: 60px;
             text-align: center;
             padding: 20px;
-            border-top: 1px solid #0f3460;
-            color: #666;
+            border-top: 1px solid #404040;
+            color: #707070;
             font-size: 0.9rem;
         }
         
@@ -140,17 +159,18 @@
     <div class="container">
         <header>
             <h1>D4NTRIX</h1>
-            <p class="subtitle">ELECTRONIC MUSIC ARTIST</p>
+            <p class="subtitle">BRAZILIAN PHONK ARTIST</p>
+            <div class="country-tag">🇧🇷 From Brazil</div>
         </header>
         
         <section class="profile-section">
             <div class="bio">
                 <h2>About D4NTRIX</h2>
-                <p>D4NTRIX is an electronic music producer known for crafting immersive soundscapes and innovative beats. With a distinctive approach to production, D4NTRIX blends cutting-edge electronic elements with compelling melodies and rhythm structures, creating music that resonates across multiple genres within the electronic spectrum.</p>
+                <p>D4NTRIX is a Brazilian phonk producer bringing the gritty, hypnotic sounds of São Paulo's underground scene to the world. Known for crafting dark, atmospheric beats with heavy funk influence, D4NTRIX blends the raw energy of phonk with innovative production techniques. His distinctive sound captures the essence of Brazilian street culture and electronic experimentation.</p>
             </div>
             
             <div class="spotify-embed">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/4NntCXalmOaXgzeQo2Rkcx?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/4NntCXalmOaXgzeQo2Rkcx?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
             </div>
         </section>
         
@@ -160,14 +180,14 @@
             <div class="album-feature">
                 <div class="album-title">Collaboration with Softmap</div>
                 <div class="album-info">
-                    <p>Experience the creative synergy between D4NTRIX and Softmap in their collaborative album. This project showcases the fusion of two distinct production styles, creating a cohesive body of work that pushes the boundaries of electronic music.</p>
+                    <p>Experience the creative synergy between D4NTRIX and Softmap in their collaborative phonk project. This project showcases the fusion of Brazilian phonk with experimental production, creating a cohesive and immersive sonic experience that pushes the boundaries of the genre.</p>
                     <p style="margin-top: 10px;"><strong>Listen on Spotify</strong> → Available in the player above</p>
                 </div>
             </div>
         </section>
         
         <footer>
-            <p>&copy; 2026 D4NTRIX | Cyntron Records</p>
+            <p>&copy; 2026 D4NTRIX | Cyntron Records | Brazil 🇧🇷</p>
         </footer>
     </div>
 </body>
