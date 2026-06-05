@@ -1,1 +1,174 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D4NTRIX - Artist Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            border-bottom: 2px solid #0f3460;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        
+        .bio {
+            padding: 30px;
+            background: rgba(15, 52, 96, 0.5);
+            border-left: 4px solid #00d4ff;
+            border-radius: 8px;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        
+        .bio h2 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .spotify-embed {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(15, 52, 96, 0.3);
+            border-radius: 8px;
+        }
+        
+        .collaborations {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(15, 52, 96, 0.4);
+            border-radius: 8px;
+            border: 1px solid #0f3460;
+        }
+        
+        .collaborations h2 {
+            color: #00d4ff;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .album-feature {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #00d4ff;
+            margin-bottom: 20px;
+        }
+        
+        .album-title {
+            font-size: 1.3rem;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .album-info {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #0f3460;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>D4NTRIX</h1>
+            <p class="subtitle">ELECTRONIC MUSIC ARTIST</p>
+        </header>
+        
+        <section class="profile-section">
+            <div class="bio">
+                <h2>About D4NTRIX</h2>
+                <p>D4NTRIX is an electronic music producer known for crafting immersive soundscapes and innovative beats. With a distinctive approach to production, D4NTRIX blends cutting-edge electronic elements with compelling melodies and rhythm structures, creating music that resonates across multiple genres within the electronic spectrum.</p>
+            </div>
+            
+            <div class="spotify-embed">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/4NntCXalmOaXgzeQo2Rkcx?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </section>
+        
+        <section class="collaborations">
+            <h2>Featured Collaboration</h2>
+            
+            <div class="album-feature">
+                <div class="album-title">Collaboration with Softmap</div>
+                <div class="album-info">
+                    <p>Experience the creative synergy between D4NTRIX and Softmap in their collaborative album. This project showcases the fusion of two distinct production styles, creating a cohesive body of work that pushes the boundaries of electronic music.</p>
+                    <p style="margin-top: 10px;"><strong>Listen on Spotify</strong> → Available in the player above</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>&copy; 2026 D4NTRIX | Cyntron Records</p>
+        </footer>
+    </div>
+</body>
+</html>
