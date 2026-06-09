@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Softmap - Cyntron Records</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Geist', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #d4d4d4;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            border-bottom: 2px solid #404040;
+        }
+        
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            margin: 0 auto 20px;
+            display: block;
+            border: 3px solid #505050;
+            object-fit: cover;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #b0b0b0, #808080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: 3px;
+            font-family: 'Geist', sans-serif;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            font-weight: 300;
+            letter-spacing: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .country-tag {
+            display: inline-block;
+            background: #3a3a3a;
+            color: #b0b0b0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            border: 1px solid #505050;
+        }
+        
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+        
+        .bio {
+            padding: 30px;
+            background: rgba(60, 60, 60, 0.5);
+            border-left: 4px solid #808080;
+            border-radius: 8px;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        
+        .bio h2 {
+            color: #a0a0a0;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-family: 'Geist', sans-serif;
+        }
+        
+        .spotify-embed {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(60, 60, 60, 0.3);
+            border-radius: 8px;
+        }
+        
+        .social-media {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(60, 60, 60, 0.4);
+            border-radius: 8px;
+            border: 1px solid #404040;
+        }
+        
+        .social-media h2 {
+            color: #a0a0a0;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-family: 'Geist', sans-serif;
+        }
+        
+        .social-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            background: rgba(128, 128, 128, 0.1);
+            border: 2px solid #505050;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #a0a0a0;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .social-link:hover {
+            background: rgba(128, 128, 128, 0.25);
+            border-color: #808080;
+            transform: translateY(-2px);
+        }
+        
+        .social-link-icon {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .spotify-artist-embed {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(60, 60, 60, 0.3);
+            border-radius: 8px;
+        }
+        
+        .collaborations {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(60, 60, 60, 0.4);
+            border-radius: 8px;
+            border: 1px solid #404040;
+        }
+        
+        .collaborations h2 {
+            color: #a0a0a0;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-family: 'Geist', sans-serif;
+        }
+        
+        .album-feature {
+            background: rgba(128, 128, 128, 0.1);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #808080;
+            margin-bottom: 20px;
+        }
+        
+        .album-title {
+            font-size: 1.3rem;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-family: 'Geist', sans-serif;
+        }
+        
+        .album-info {
+            color: #909090;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #404040;
+            color: #707070;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .profile-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .social-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="[REPLACE]" alt="Softmap Profile Picture" class="profile-image">
+            <h1>D4NTRIX</h1>
+            <p class="subtitle">MUSIC ARTIST</p>
+            <div class="country-tag">🇺🇸 From United States</div>
+        </header>
+        
+        <section class="profile-section">
+            <div class="bio">
+                <h2>About Softmap</h2>
+                <p>Occupation: Music Artist<br>Origin: India<br><br>:3</p>
+            </div>
+            
+            <div class="spotify-embed">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/album/4NntCXalmOaXgzeQo2Rkcx?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+        
+        <section class="social-media">
+            <h2>Follow Softmap</h2>
+            
+            <div class="social-links">
+                <a href="https://www.youtube.com/@SoftmapYT" target="_blank" class="social-link">
+                    <span class="social-link-icon">▶️</span>
+                    YouTube
+                </a>
+                <a href="https://www.instagram.com/prodby.softmap/" target="_blank" class="social-link">
+                    <span class="social-link-icon">📷</span>
+                    Instagram
+                </a>
+                <a href="https://open.spotify.com/intl-pt/artist/[REPLACE]" target="_blank" class="social-link">
+                    <span class="social-link-icon">🎵</span>
+                    Spotify
+                </a>
+                <a href="https://discord.gg/C9TgWUKtp7" target="_blank" class="social-link">
+                    <span class="social-link-icon">💬</span>
+                    Discord Server
+                </a>
+            </div>
+            
+            <div class="spotify-artist-embed">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/0HaSpzTBr5gjAHZQmbgBvg?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+        
+        <section class="collaborations">
+            <h2>Featured Collaboration</h2>
+            
+            <div class="album-feature">
+                <div class="album-title">Collaboration with D4NTRIX</div>
+                <div class="album-info">
+                    <p>Softmap and D4NTRIX made a song called PERDIDO NO VAZIO, which released on June 3rd, 2026.</p>
+                    <p style="margin-top: 10px;"><strong>Listen on Spotify</strong> → Available in the player above</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>&copy; 2026 Softmap | Cyntron Records | Brazil 🇺🇸</p>
+        </footer>
+    </div>
+</body>
+</html>
