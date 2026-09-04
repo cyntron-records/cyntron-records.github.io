@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyntron Records — Savings Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --target: #f43f5e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 16px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+    }
+    .subtitle {
+      margin: 4px 0 0 0;
+      font-size: 14px;
+      color: var(--subtext);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--subtext);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+    .chart-box {
+      position: relative;
+      height: 380px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>Cyntron Records</h1>
+      <p class="subtitle">White-Label Distribution Fund Tracker (Sep 2026 – Feb 2027)</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Target Goal</div>
+      <div class="stat-value" style="color: var(--target);">€516</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Current Savings</div>
+      <div class="stat-value" id="current-savings" style="color: var(--accent);">€0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Remaining</div>
+      <div class="stat-value" id="remaining">€516</div>
+    </div>
+  </div>
+
+  <div class="chart-box">
+    <canvas id="progressChart"></canvas>
+  </div>
+</div>
+
+<script>
+  // =================================================================
+  // EDIT YOUR SAVINGS HERE
+  // Enter total cumulative saved amount (€) for each week.
+  // Set to null for future weeks that haven't happened yet.
+  // =================================================================
+  const weeklyData = [
+    { date: "Sep 1", amount: 0 },
+    { date: "Sep 8", amount: null },
+    { date: "Sep 15", amount: null },
+    { date: "Sep 22", amount: null },
+    { date: "Sep 29", amount: null },
+    { date: "Oct 6", amount: null },
+    { date: "Oct 13", amount: null },
+    { date: "Oct 20", amount: null },
+    { date: "Oct 27", amount: null },
+    { date: "Nov 3", amount: null },
+    { date: "Nov 10", amount: null },
+    { date: "Nov 17", amount: null },
+    { date: "Nov 24", amount: null },
+    { date: "Dec 1", amount: null },
+    { date: "Dec 8", amount: null },
+    { date: "Dec 15", amount: null },
+    { date: "Dec 22", amount: null },
+    { date: "Dec 29", amount: null },
+    { date: "Jan 5", amount: null },
+    { date: "Jan 12", amount: null },
+    { date: "Jan 19", amount: null },
+    { date: "Jan 26", amount: null },
+    { date: "Feb 2", amount: null },
+    { date: "Feb 9", amount: null },
+    { date: "Feb 16", amount: null },
+    { date: "Feb 23", amount: null },
+    { date: "Feb 28", amount: null }
+  ];
+
+  const targetAmount = 516;
+
+  // Calculate current savings & stats
+  const filledAmounts = weeklyData.filter(d => d.amount !== null).map(d => d.amount);
+  const currentTotal = filledAmounts.length > 0 ? filledAmounts[filledAmounts.length - 1] : 0;
+  const remainingTotal = Math.max(0, targetAmount - currentTotal);
+
+  document.getElementById('current-savings').textContent = '€' + currentTotal;
+  document.getElementById('remaining').textContent = '€' + remainingTotal;
+
+  // Chart setup
+  const ctx = document.getElementById('progressChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: weeklyData.map(d => d.date),
+      datasets: [
+        {
+          label: 'Savings Progress (€)',
+          data: weeklyData.map(d => d.amount),
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56, 189, 248, 0.15)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointBackgroundColor: '#38bdf8'
+        },
+        {
+          label: 'Target Goal (€516)',
+          data: Array(weeklyData.length).fill(targetAmount),
+          borderColor: '#f43f5e',
+          borderDash: [6, 6],
+          pointRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 600,
+          grid: { color: '#334155' },
+          ticks: { color: '#94a3b8', callback: value => '€' + value }
+        },
+        x: {
+          grid: { color: '#1e293b' },
+          ticks: { color: '#94a3b8' }
+        }
+      },
+      plugins: {
+        legend: { labels: { color: '#f8fafc' } }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
