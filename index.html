@@ -11,17 +11,584 @@ TO ANYONE READING THIS IN THE FUTURE, PLEASE UPDATE THIS TEMPLATE BY REPLACING I
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyntron Records</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #140607;
+            --bg-2: #230a0d;
+            --bg-3: #410d12;
+            --panel: rgba(24, 8, 10, 0.82);
+            --panel-strong: rgba(18, 7, 9, 0.96);
+            --line: rgba(255, 112, 112, 0.22);
+            --red-1: #ff5a5f;
+            --red-2: #ff7b54;
+            --red-3: #ff3d4d;
+            --red-4: #ffb3a7;
+            --text: #fff4f4;
+            --muted: #ffd7d7;
+            --shadow: rgba(255, 91, 91, 0.32);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(255, 90, 95, 0.25), transparent 22%),
+                radial-gradient(circle at 80% 8%, rgba(255, 123, 84, 0.22), transparent 18%),
+                radial-gradient(circle at 50% 82%, rgba(255, 61, 77, 0.18), transparent 24%),
+                linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 42%, var(--bg-3) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: clamp(18px, 3vw, 42px);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255, 160, 160, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 160, 160, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(20, 6, 7, 0.28) 100%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header,
+        .profile-section > *,
+        .metrics,
+        .feature-grid,
+        .social-media,
+        .collaborations,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 52px;
+            padding: clamp(32px, 4vw, 62px) clamp(20px, 3vw, 40px);
+            background: linear-gradient(180deg, rgba(28, 10, 12, 0.92), rgba(14, 6, 8, 0.8));
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            box-shadow:
+                0 0 0 1px rgba(255, 90, 95, 0.04),
+                0 0 24px rgba(255, 90, 95, 0.18),
+                0 28px 85px rgba(10, 4, 6, 0.7),
+                inset 0 0 30px rgba(255, 90, 95, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            inset: -30% -10% auto;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 90, 95, 0.14), transparent 60%);
+            filter: blur(22px);
+        }
+
+        .brand-copy {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-image {
+            position: relative;
+            width: min(220px, 44vw);
+            height: min(220px, 44vw);
+            border-radius: 24px;
+            margin: 28px auto 0;
+            display: block;
+            object-fit: cover;
+            border: 1px solid rgba(255, 170, 170, 0.45);
+            box-shadow:
+                0 0 0 4px rgba(255, 90, 95, 0.08),
+                0 18px 42px rgba(255, 90, 95, 0.18),
+                0 0 30px rgba(255, 123, 84, 0.2);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .profile-image:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 0 0 4px rgba(255, 123, 84, 0.12),
+                0 24px 50px rgba(255, 90, 95, 0.22),
+                0 0 38px rgba(255, 123, 84, 0.22);
+        }
+
+        h1 {
+            font-size: clamp(2.6rem, 6vw, 5.8rem);
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffb3a7 18%, var(--red-2) 38%, #ff4d4d 62%, #ffd5d5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 22px rgba(255, 123, 84, 0.18);
+        }
+
+        .subtitle {
+            font-size: clamp(0.72rem, 1.3vw, 1.15rem);
+            color: rgba(255, 228, 228, 0.9);
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .country-tag {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 90, 95, 0.22), rgba(255, 123, 84, 0.14));
+            color: var(--text);
+            border: 1px solid rgba(255, 170, 170, 0.28);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 16px rgba(255, 90, 95, 0.08);
+            font-size: 0.75rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+        }
+
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1.08fr 0.92fr;
+            gap: 28px;
+            align-items: stretch;
+            margin-bottom: 52px;
+        }
+
+        .metrics,
+        .feature-grid,
+        .artist-showcase,
+        .reviews,
+        .bio,
+        .spotify-embed,
+        .social-media,
+        .collaborations,
+        .featured-track,
+        .album-feature,
+        .feature-card,
+        .stat-card,
+        .artist-card,
+        .review-card {
+            background: linear-gradient(180deg, rgba(24, 8, 10, 0.9), rgba(15, 7, 8, 0.72));
+            border: 1px solid rgba(255, 170, 170, 0.15);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 24px 50px rgba(9, 4, 5, 0.38);
+            backdrop-filter: blur(12px);
+        }
+
+        .bio {
+            padding: clamp(22px, 3vw, 36px);
+            border-radius: 26px;
+            border-left: 4px solid var(--red-1);
+            line-height: 1.8;
+            font-size: 1.06rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bio::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto auto;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(255, 123, 84, 0.12), transparent 70%);
+            pointer-events: none;
+        }
+
+        .bio h2,
+        .metrics h2,
+        .artist-showcase h2,
+        .reviews h2,
+        .social-media h2,
+        .collaborations h2 {
+            color: var(--text);
+            margin-bottom: 18px;
+            font-size: clamp(1.7rem, 2vw, 2.5rem);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .bio p {
+            color: rgba(255, 234, 234, 0.82);
+            font-size: 1.02rem;
+        }
+
+        .spotify-embed,
+        .featured-track {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 18px;
+            border-radius: 26px;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        .spotify-embed iframe,
+        .featured-track iframe {
+            width: 100%;
+            min-height: 352px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 170, 170, 0.2);
+            box-shadow: 0 0 18px rgba(255, 90, 95, 0.12);
+        }
+
+        .metrics,
+        .social-media,
+        .collaborations {
+            margin-top: 44px;
+            padding: clamp(24px, 3vw, 42px);
+            border-radius: 28px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+        }
+
+        .stat-card {
+            border-radius: 22px;
+            padding: 22px 18px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            display: block;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            font-family: 'Orbitron', sans-serif;
+            color: #ffd9d9;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .label {
+            display: block;
+            color: rgba(255, 234, 234, 0.75);
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 44px;
+            padding: 18px;
+            border-radius: 28px;
+        }
+
+        .artist-showcase,
+        .reviews {
+            margin-top: 44px;
+            padding: clamp(24px, 3vw, 42px);
+            border-radius: 28px;
+        }
+
+        .artist-grid,
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .artist-card,
+        .review-card {
+            border-radius: 22px;
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+        }
+
+        .artist-card::before,
+        .review-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -10% -25% auto;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255, 123, 84, 0.12), transparent 65%);
+            pointer-events: none;
+        }
+
+        .artist-card .artist-name {
+            display: block;
+            color: #fff4f4;
+            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .artist-card p,
+        .review-card p {
+            color: rgba(255, 234, 234, 0.8);
+            line-height: 1.7;
+            font-size: 0.96rem;
+        }
+
+        .review-card .stars {
+            display: block;
+            color: #ffb3a7;
+            letter-spacing: 0.18em;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .feature-card {
+            border-radius: 22px;
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -15% -30% auto;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(255, 123, 84, 0.13), transparent 65%);
+            pointer-events: none;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+            color: #fff2f2;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .feature-card p {
+            color: rgba(255, 234, 234, 0.8);
+            line-height: 1.7;
+            font-size: 0.96rem;
+        }
+
+        .social-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .social-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 74px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, rgba(28, 10, 12, 0.9), rgba(18, 7, 9, 0.8));
+            border: 1px solid rgba(255, 170, 170, 0.18);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(255, 90, 95, 0.04);
+            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .social-link::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 90, 95, 0.15), rgba(255, 123, 84, 0.18), rgba(255, 179, 167, 0.1));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 123, 84, 0.55);
+            box-shadow: 0 18px 35px rgba(255, 90, 95, 0.14), 0 0 30px rgba(255, 123, 84, 0.1);
+        }
+
+        .social-link:hover::before {
+            opacity: 1;
+        }
+
+        .social-link > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .social-link-icon {
+            font-size: 1.25rem;
+            filter: drop-shadow(0 0 10px rgba(255, 123, 84, 0.25));
+        }
+
+        .social-link[href*="discord"] {
+            display: block;
+            padding: 0;
+            min-height: unset;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(24, 8, 10, 0.9), rgba(20, 7, 9, 0.7));
+        }
+
+        .social-link[href*="discord"] iframe {
+            display: block;
+            width: 100%;
+            height: 260px;
+            border: 0;
+            border-radius: 18px 18px 0 0;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .social-link[href*="discord"] {
+            line-height: 1.5;
+            font-size: 0.98rem;
+            padding-bottom: 16px;
+        }
+
+        .featured-track {
+            border-radius: 22px;
+            overflow: hidden;
+        }
+
+        .album-feature {
+            padding: clamp(22px, 2.8vw, 30px);
+            border-radius: 22px;
+            border-left: 4px solid var(--red-2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .album-feature::before {
+            content: "";
+            position: absolute;
+            inset: auto -20% -35% auto;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 123, 84, 0.18), transparent 62%);
+            pointer-events: none;
+        }
+
+        .album-title {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            color: var(--text);
+            margin-bottom: 14px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.04em;
+        }
+
+        .album-info {
+            color: rgba(255, 235, 235, 0.85);
+            font-size: 1rem;
+            line-height: 1.8;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .album-info strong {
+            color: #ffd9d9;
+        }
+
+        footer {
+            margin-top: 52px;
+            text-align: center;
+            padding: 18px 12px 6px;
+            border-top: 1px solid rgba(255, 170, 170, 0.16);
+            color: rgba(255, 217, 217, 0.7);
+            font-size: 0.8rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .profile-section {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+
+            .profile-image {
+                width: 170px;
+                height: 170px;
+            }
+
+            .social-links {
+                grid-template-columns: 1fr;
+            }
+
+            .social-link {
+                min-height: 60px;
+                letter-spacing: 0.12em;
+            }
+
+            .subtitle {
+                letter-spacing: 0.18em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <div class="brand-copy">
+                <h1>Cyntron Records</h1>
+                <p class="subtitle">A FREE TO USE RECORD LABEL</p>
+                <div class="country-tag">Made with ❤️ by Softmap</div>
+            </div>
+
             <img src="[REPLACE]" alt="Cyntron Records Logo" class="profile-image">
-            <h1>Cyntron Records</h1>
-            <p class="subtitle">A FREE TO USE RECORD LABEL</p>
-            <div class="country-tag">Made with ❤️ by Softmap</div>
         </header>
         
         <section class="profile-section">
@@ -35,6 +602,79 @@ TO ANYONE READING THIS IN THE FUTURE, PLEASE UPDATE THIS TEMPLATE BY REPLACING I
             </div>
         </section>
         
+        <section class="metrics">
+            <h2>Label Signal</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="value">4.8K+</span>
+                    <span class="label">Monthly listeners</span>
+                </div>
+                <div class="stat-card">
+                    <span class="value">24</span>
+                    <span class="label">Artist launches</span>
+                </div>
+                <div class="stat-card">
+                    <span class="value">8</span>
+                    <span class="label">Regions reached</span>
+                </div>
+                <div class="stat-card">
+                    <span class="value">24/7</span>
+                    <span class="label">Creative pipeline</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-grid">
+            <div class="feature-card">
+                <h3>Worldwide Push</h3>
+                <p>We build release strategy, optimize visibility, and help tracks land across streaming platforms with a global audience in mind.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Creative Direction</h3>
+                <p>From artist positioning to visual identity, we shape brand energy so every release feels cohesive, memorable, and ready for the next wave.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Artist Growth</h3>
+                <p>We focus on discoverability, consistency, and long-term momentum so emerging voices can build a sustainable presence.</p>
+            </div>
+        </section>
+
+        <section class="artist-showcase">
+            <h2>Artists in Orbit</h2>
+            <div class="artist-grid">
+                <div class="artist-card">
+                    <span class="artist-name">Softmap</span>
+                    <p>High-energy electronic textures with a cinematic pulse, built for late-night listening and immersive live energy.</p>
+                </div>
+                <div class="artist-card">
+                    <span class="artist-name">D4NTRIX</span>
+                    <p>Dark, precise, and emotionally sharp production that thrives in club settings and high-contrast sonic landscapes.</p>
+                </div>
+                <div class="artist-card">
+                    <span class="artist-name">RIPPJXW</span>
+                    <p>Experimental and atmospheric, blending mood-driven songwriting with a futuristic edge that keeps listeners locked in.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews">
+            <h2>Listener Reviews</h2>
+            <div class="review-grid">
+                <div class="review-card">
+                    <span class="stars">★★★★★</span>
+                    <p>"The sound feels like the future of underground release culture — bold, clean, and unforgettable."</p>
+                </div>
+                <div class="review-card">
+                    <span class="stars">★★★★★</span>
+                    <p>"A label that actually understands atmosphere, identity, and momentum. Every release feels intentional."</p>
+                </div>
+                <div class="review-card">
+                    <span class="stars">★★★★★</span>
+                    <p>"The curation is sharp and the energy is consistent. This is the type of label that attracts serious listeners."</p>
+                </div>
+            </div>
+        </section>
+
         <section class="social-media">
             <h2>Follow Us</h2>
             
