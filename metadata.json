@@ -1,0 +1,6 @@
+{
+  "name": "Cyntron Records",
+  "description": "Futuristic electronic record label portal with artist accounts, demo drop submissions, and A&R admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

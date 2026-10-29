@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #080305;
+    color: #f3f4f6;
+    overflow-x: hidden;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+  }
+}
+
+/* Custom Crimson Red Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080305;
+}
+::-webkit-scrollbar-thumb {
+  background: #3b0711;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 31, 75, 0.3);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff1f4b;
+}
+
+/* Glow effects - Red / Crimson */
+.glow-red {
+  box-shadow: 0 0 25px -5px rgba(255, 31, 75, 0.4);
+}
+.glow-red-lg {
+  box-shadow: 0 0 40px -5px rgba(255, 31, 75, 0.6);
+}
+.text-glow-red {
+  text-shadow: 0 0 12px rgba(255, 31, 75, 0.7);
+}
+
+@keyframes pulseGlowRed {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
+}
+.animate-pulse-glow-red {
+  animation: pulseGlowRed 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
