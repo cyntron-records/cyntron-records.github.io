@@ -61,7 +61,7 @@ export default function App() {
   const { tab, sub } = route;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#080305] text-white">
+    <div className="site-shell min-h-screen flex flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-black focus:px-3 focus:py-2 focus:rounded">
         Skip to content
       </a>
