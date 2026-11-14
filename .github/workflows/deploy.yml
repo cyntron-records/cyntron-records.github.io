@@ -23,6 +23,8 @@ jobs:
       - run: npm run build
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+      - name: Include standalone topo video generator page
+        run: cp topo-video-generator.html dist/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
