@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Topo Video Generator</title>
+<style>
+:root{--bg:#f4f4f2;--panel:#fff;--ink:#16161a;--mut:#6b6b73;--line:#d9d9d4;--acc:#16161a;--accink:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0b0d;--panel:#141417;--ink:#ececee;--mut:#8d8d96;--line:#2a2a30;--acc:#ececee;--accink:#0b0b0d}}
+:root[data-theme="dark"]{--bg:#0b0b0d;--panel:#141417;--ink:#ececee;--mut:#8d8d96;--line:#2a2a30;--acc:#ececee;--accink:#0b0b0d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+aside{background:var(--panel);border-right:1px solid var(--line);padding:16px;overflow-y:auto;max-height:100vh;position:sticky;top:0}
+h1{font-size:16px;margin:0 0 2px;letter-spacing:.04em;text-transform:uppercase}
+.sub{color:var(--mut);font-size:12px;margin-bottom:12px}
+details{border-top:1px solid var(--line);padding:8px 0}
+summary{cursor:pointer;font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 0}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin:8px 0;align-items:center}
+.row label{color:var(--mut);font-size:12px}.row output{font-variant-numeric:tabular-nums;font-size:12px}
+.row input[type=range]{grid-column:1/3;width:100%;accent-color:var(--acc)}
+.row.inl{grid-template-columns:1fr auto}
+select,input[type=color]{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font:inherit}
+input[type=color]{padding:0;width:44px;height:26px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 12px}
+button.pri{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:600}
+button:disabled{opacity:.45;cursor:default}
+main{padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.stage{background:#000;border:1px solid var(--line);border-radius:8px;overflow:hidden;line-height:0}
+canvas{width:100%;height:auto;max-height:72vh;object-fit:contain;display:block;margin:0 auto}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.prog{flex:1;min-width:160px;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--acc)}
+#st{color:var(--mut);font-size:12px;min-height:1.4em}
+@media (max-width:820px){.app{grid-template-columns:1fr}aside{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);order:2}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js"></script>
+</head>
+<body>
+<div class="app">
+<aside>
+<h1>Topo Generator</h1>
+<div class="sub">Animated contour maps, rendered live and recorded to video.</div>
+<div id="ctl"></div>
+<div class="bar" style="margin-top:12px"><button id="rnd">Randomize seed</button><button id="rst">Reset all</button></div>
+</aside>
+<main>
+<div class="stage"><canvas id="cv" width="1920" height="1080"></canvas></div>
+<div class="bar">
+<button id="play">Pause</button><button id="restart">Restart</button>
+<button id="rec" class="pri">Record video</button>
+<div class="prog"><i id="pg"></i></div><span id="tm" style="font-variant-numeric:tabular-nums;font-size:12px">0:00</span>
+</div>
+<div class="bar"><button id="dl" disabled>Download video</button><button id="png">Save frame (PNG)</button></div>
+<div id="st">Videos render frame by frame at a locked frame rate (up to 1920×1080 at 60 fps), so the result is smooth even if the live preview lags. Rendering takes a few minutes; keep this tab open.</div>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id),cv=$("cv"),ctx=cv.getContext("2d");
+// ---------- settings ----------
+const R=(k,l,v,min,max,s,g)=>({t:"r",k,l,v,min,max,s,g});
+const S=(k,l,v,opts,g)=>({t:"s",k,l,v,opts,g});
+const C=(k,l,v,g)=>({t:"c",k,l,v,g});
+const K=(k,l,v,g)=>({t:"k",k,l,v,g});
+const DEFS=[
+R("seed","Seed",42,1,9999,1,"Terrain"),R("scale","Scale",1.6,.3,6,.05,"Terrain"),R("octaves","Octaves",4,1,7,1,"Terrain"),
+R("pers","Roughness",.5,.2,.8,.01,"Terrain"),R("lac","Lacunarity",2,1.5,3,.05,"Terrain"),R("warp","Domain warp",.35,0,2,.05,"Terrain"),
+R("ridged","Ridged blend",0,0,1,.05,"Terrain"),R("island","Island falloff",.3,0,1.5,.05,"Terrain"),
+R("evolve","Evolve speed",.08,0,.6,.01,"Motion"),R("dx","Drift X",.03,-.5,.5,.01,"Motion"),R("dy","Drift Y",.01,-.5,.5,.01,"Motion"),
+R("levels","Contour levels",28,4,80,1,"Contours"),R("detail","Grid detail (columns)",220,60,420,5,"Contours"),
+S("mode","Width driven by","elevation",[["elevation","Elevation"],["index","Index contours"],["slope","Slope density"],["noise","Noise field"],["uniform","Uniform"]],"Line width"),
+R("wmin","Min width (px)",.6,.2,8,.1,"Line width"),R("wmax","Max width (px)",3.2,.4,18,.1,"Line width"),
+R("curve","Width curve",1,.3,3,.05,"Line width"),R("idx","Index every N",5,2,12,1,"Line width"),
+R("sens","Slope sensitivity",2,.2,6,.1,"Line width"),R("wns","Noise width scale",3,.5,10,.1,"Line width"),
+K("inv","Invert widths",false,"Line width"),
+C("fg","Line color","#ffffff","Look"),C("bg","Background","#000000","Look"),R("op","Line opacity",1,.1,1,.05,"Look"),R("glow","Glow amount",0,0,40,1,"Look"),C("glowc","Glow color","#ffffff","Look"),
+S("size","Resolution","1920x1080",[["1280x720","1280×720"],["1920x1080","1920×1080"]],"Output"),
+R("dur","Duration (seconds)",180,5,600,5,"Output"),S("fps","Frame rate",30,[[24,"24"],[30,"30"],[60,"60"]],"Output"),R("mbps","Bitrate (Mbps)",12,2,40,1,"Output")
+];
+const P={},D={};DEFS.forEach(d=>D[d.k]=d.v);
+const PRESETS={
+swoosh:{levels:16,detail:300,scale:.9,octaves:2,pers:.45,lac:2,warp:1.1,ridged:0,island:0,evolve:.12,dx:.06,dy:.03,mode:"noise",wns:1.3,wmin:.4,wmax:7,curve:1.4,op:1,glow:10,fps:60},
+phonk:{levels:46,detail:260,scale:2.2,octaves:5,pers:.55,lac:2.05,warp:.6,ridged:.35,island:0,evolve:.06,dx:.02,dy:.008,mode:"noise",wmin:.5,wmax:3.4,curve:1,wns:2.5,op:.92,fps:60},
+classic:{levels:28,detail:220,scale:1.6,octaves:4,pers:.5,lac:2,warp:.35,ridged:0,island:.3,evolve:.08,dx:.03,dy:.01,mode:"elevation",wmin:.6,wmax:3.2,curve:1,wns:3,op:1},
+dense:{levels:70,detail:300,scale:3,octaves:5,pers:.5,lac:2,warp:.9,ridged:.6,island:0,evolve:.05,dx:.02,dy:.01,mode:"slope",wmin:.4,wmax:2.6,curve:1,sens:2,op:.9},
+index:{levels:40,detail:240,scale:1.8,octaves:4,pers:.5,lac:2,warp:.4,ridged:0,island:.2,evolve:.06,dx:.02,dy:.01,mode:"index",idx:5,wmin:.5,wmax:3.6,curve:1,op:1}};
+function load(){Object.assign(P,D,PRESETS.swoosh)}load();
+const ctl=$("ctl");let grp={};
+DEFS.forEach(d=>{
+ if(!grp[d.g]){const el=document.createElement("details");el.open=["Terrain","Line width"].includes(d.g);el.innerHTML="<summary>"+d.g+"</summary>";ctl.appendChild(el);grp[d.g]=el}
+ const row=document.createElement("div");row.className="row"+(d.t==="r"?"":" inl");
+ const lab=document.createElement("label");lab.textContent=d.l;lab.htmlFor="i_"+d.k;row.appendChild(lab);
+ let inp;
+ if(d.t==="r"){const o=document.createElement("output");o.id="o_"+d.k;row.appendChild(o);inp=document.createElement("input");inp.type="range";inp.min=d.min;inp.max=d.max;inp.step=d.s}
+ else if(d.t==="s"){inp=document.createElement("select");d.opts.forEach(([v,t])=>{const op=document.createElement("option");op.value=v;op.textContent=t;inp.appendChild(op)})}
+ else if(d.t==="c"){inp=document.createElement("input");inp.type="color"}
+ else{inp=document.createElement("input");inp.type="checkbox"}
+ inp.id="i_"+d.k;row.appendChild(inp);grp[d.g].appendChild(row);
+ inp.oninput=inp.onchange=()=>{P[d.k]=d.t==="k"?inp.checked:(d.t==="r"?+inp.value:(d.t==="s"&&typeof d.v==="number"?+inp.value:inp.value));sync(d);if(d.k==="seed")seedNoise(P.seed);if(d.k==="size")resize()};
+});
+function sync(d){if(d.t==="r")$("o_"+d.k).textContent=(+P[d.k]).toFixed(d.s<1?2:0)}
+function paint(){DEFS.forEach(d=>{const i=$("i_"+d.k);if(d.t==="k")i.checked=P[d.k];else i.value=P[d.k];sync(d)})}
+function resize(){const[w,h]=P.size.split("x").map(Number);cv.width=w;cv.height=h}
+const ps=document.createElement("select");ps.innerHTML='<option value="swoosh">Preset: Swoosh edit (matches your video)</option><option value="phonk">Preset: Phonk edit (dense, flowing)</option><option value="classic">Preset: Classic topo</option><option value="dense">Preset: Dense rugged</option><option value="index">Preset: Index contours</option>';
+ps.style.cssText="width:100%;margin-bottom:8px";ctl.before(ps);ps.onchange=()=>{Object.assign(P,{glow:0},PRESETS[ps.value]);paint()};
+$("rst").onclick=()=>{load();ps.value="swoosh";paint();seedNoise(P.seed);resize()};
+$("rnd").onclick=()=>{P.seed=1+Math.floor(Math.random()*9999);paint();seedNoise(P.seed)};
+// ---------- noise ----------
+const perm=new Uint8Array(512);
+function seedNoise(s){let r=(s*2654435761)>>>0||1;const rnd=()=>{r^=r<<13;r>>>=0;r^=r>>>17;r^=r<<5;r>>>=0;return r/4294967296};
+ const p=[...Array(256).keys()];for(let i=255;i>0;i--){const j=Math.floor(rnd()*(i+1));[p[i],p[j]]=[p[j],p[i]]}for(let i=0;i<512;i++)perm[i]=p[i&255]}
+const fade=t=>t*t*t*(t*(t*6-15)+10),lerp=(a,b,t)=>a+(b-a)*t;
+function grad(h,x,y,z){h&=15;const u=h<8?x:y,v=h<4?y:(h===12||h===14?x:z);return((h&1)?-u:u)+((h&2)?-v:v)}
+function noise(x,y,z){const fx=Math.floor(x),fy=Math.floor(y),fz=Math.floor(z),X=fx&255,Y=fy&255,Z=fz&255;x-=fx;y-=fy;z-=fz;
+ const u=fade(x),v=fade(y),w=fade(z),A=perm[X]+Y,AA=perm[A]+Z,AB=perm[A+1]+Z,B=perm[X+1]+Y,BA=perm[B]+Z,BB=perm[B+1]+Z;
+ return lerp(lerp(lerp(grad(perm[AA],x,y,z),grad(perm[BA],x-1,y,z),u),lerp(grad(perm[AB],x,y-1,z),grad(perm[BB],x-1,y-1,z),u),v),
+ lerp(lerp(grad(perm[AA+1],x,y,z-1),grad(perm[BA+1],x-1,y,z-1),u),lerp(grad(perm[AB+1],x,y-1,z-1),grad(perm[BB+1],x-1,y-1,z-1),u),v),w)}
+function height(x,y,z){
+ let wx=x,wy=y;if(P.warp>0){wx+=P.warp*noise(x*.7+11,y*.7,z*.5);wy+=P.warp*noise(x*.7,y*.7+23,z*.5)}
+ let a=1,f=1,s=0,n=0;
+ for(let o=0;o<P.octaves;o++){let v=noise(wx*f,wy*f,z*f*.5+o*7.3);
+  if(P.ridged>0){const r=1-Math.abs(v)*1.6;v=v*(1-P.ridged)+(r*2-1)*P.ridged}
+  s+=v*a;n+=a;a*=P.pers;f*=P.lac}
+ return .5+.8*s/n}
+// ---------- contours ----------
+const TB=[[],[3,2],[2,1],[3,1],[0,1],[0,3,1,2],[0,2],[0,3],[0,3],[0,2],[0,1,3,2],[0,1],[3,1],[2,1],[3,2],[]];
+let F=new Float32Array(1),px=0,py=0;
+function edge(e,x0,y0,cs,L,a,b,c,d){
+ if(e===0){px=x0+cs*(L-a)/(b-a);py=y0}else if(e===1){px=x0+cs;py=y0+cs*(L-b)/(c-b)}
+ else if(e===2){px=x0+cs*(L-d)/(c-d);py=y0+cs}else{px=x0;py=y0+cs*(L-a)/(d-a)}}
+function render(T){
+ const W=cv.width,H=cv.height;ctx.globalAlpha=1;ctx.fillStyle=P.bg;ctx.fillRect(0,0,W,H);
+ const cols=Math.round(P.detail),cs=W/cols,rows=Math.ceil(H/cs),cw=cols+1;
+ if(F.length<cw*(rows+1))F=new Float32Array(cw*(rows+1));
+ const z=T*P.evolve,ox=T*P.dx,oy=T*P.dy,sc=P.scale*3/H*cs;
+ for(let j=0;j<=rows;j++)for(let i=0;i<=cols;i++){
+  let h=height(i*sc+ox,j*sc+oy,z);
+  if(P.island>0){const rx=(i/cols-.5)*2*(W/H>1?W/H:1),ry=(j*cs/H-.5)*2*(W/H<1?H/W:1);h-=P.island*(rx*rx+ry*ry)*.5}
+  F[j*cw+i]=h}
+ const NB=16,paths=Array.from({length:NB},()=>new Path2D()),step=1/P.levels,eps=.0013;
+ const mode=P.mode,curve=P.curve,inv=P.inv,idx=P.idx;
+ for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+  const k=j*cw+i,a=F[k],b=F[k+1],c=F[k+cw+1],d=F[k+cw],mn=Math.min(a,b,c,d),mx=Math.max(a,b,c,d);
+  const l0=Math.ceil(mn/step-eps),l1=Math.floor(mx/step-eps);if(l1<l0)continue;
+  const x0=i*cs,y0=j*cs;
+  for(let li=l0;li<=l1;li++){
+   const L=(li+eps)*step,cc=(a>=L?8:0)|(b>=L?4:0)|(c>=L?2:0)|(d>=L?1:0),e=TB[cc];if(!e.length)continue;
+   let w;
+   if(mode==="elevation")w=L;else if(mode==="index")w=(li%idx===0)?1:0;
+   else if(mode==="slope")w=(mx-mn)/step*P.sens*.6;
+   else if(mode==="noise")w=noise((x0+cs/2)/H*P.wns,(y0+cs/2)/H*P.wns,T*.12+500)*1.3+.5;
+   else w=1;
+   w=Math.min(1,Math.max(0,w));w=Math.pow(w,curve);if(inv)w=1-w;
+   const p=paths[Math.round(w*(NB-1))];
+   for(let q=0;q<e.length;q+=2){
+    edge(e[q],x0,y0,cs,L,a,b,c,d);p.moveTo(px,py);edge(e[q+1],x0,y0,cs,L,a,b,c,d);p.lineTo(px,py)}
+  }}
+ ctx.strokeStyle=P.fg;ctx.lineCap="round";ctx.globalAlpha=P.op;if(P.glow>0){ctx.shadowColor=P.glowc;ctx.shadowBlur=P.glow*(W/1920)}
+ for(let b=0;b<NB;b++){ctx.lineWidth=(P.wmin+(P.wmax-P.wmin)*b/(NB-1))*(W/1920);ctx.stroke(paths[b])}ctx.shadowBlur=0;
+ ctx.globalAlpha=1}
+// ---------- loop / transport ----------
+let T=0,playing=true,last=performance.now(),rec=null,chunks=[],vid=null;
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+function frame(now){
+ requestAnimationFrame(frame);const dt=Math.min(.1,(now-last)/1000);last=now;if(busy)return;
+ if(rec){T=(now-rec.start)/1000;if(T>=rec.dur){T=rec.dur;render(T);rec.mr.stop();rec.done=true;return}
+  $("pg").style.width=(T/rec.dur*100)+"%";$("tm").textContent=fmt(T)+" / "+fmt(rec.dur)}
+ else{if(playing)T+=dt;$("pg").style.width="0";$("tm").textContent=fmt(T)}
+ render(T)}
+let busy=false,cancel=false;
+const yld=()=>new Promise(r=>{const c=new MessageChannel();c.port1.onmessage=()=>r();c.port2.postMessage(0)});
+async function offline(){
+ busy=true;cancel=false;vid=null;$("dl").disabled=true;ui();
+ const fps=+P.fps,W=cv.width,H=cv.height,total=Math.round(P.dur*fps),t0=performance.now();let f=0;
+ try{
+  const cfg={codec:"avc1.640033",width:W,height:H,bitrate:P.mbps*1e6,framerate:fps};
+  const sup=await VideoEncoder.isConfigSupported(cfg);if(!sup.supported)throw new Error("H.264 encoding is not supported in this browser");
+  const target=new Mp4Muxer.ArrayBufferTarget(),muxer=new Mp4Muxer.Muxer({target,video:{codec:"avc",width:W,height:H},fastStart:"in-memory"});
+  let err=null;const enc=new VideoEncoder({output:(c,m)=>muxer.addVideoChunk(c,m),error:e=>{err=e}});enc.configure(cfg);
+  for(;f<total&&!cancel&&!err;f++){
+   T=f/fps;render(T);
+   const vf=new VideoFrame(cv,{timestamp:Math.round(f*1e6/fps),duration:Math.round(1e6/fps)});
+   enc.encode(vf,{keyFrame:f%(fps*2)===0});vf.close();
+   while(enc.encodeQueueSize>4)await yld();
+   if(f%3===0){$("pg").style.width=(f/total*100)+"%";$("tm").textContent=fmt(f/fps)+" / "+fmt(P.dur);
+    const el=(performance.now()-t0)/1000;$("st").textContent="Rendering frame "+f+" of "+total+" (about "+fmt(el/(f+1)*(total-f))+" left). Keep this tab open.";await yld()}
+  }
+  if(err)throw err;
+  await enc.flush();muxer.finalize();
+  vid={blob:new Blob([target.buffer],{type:"video/mp4"}),ext:"mp4"};
+  $("dl").disabled=false;$("st").textContent="Done: "+fmt(f/fps)+" at "+fps+" fps ("+(vid.blob.size/1048576).toFixed(1)+" MB, .mp4). Press Download video.";
+ }catch(e){$("st").textContent="Recording failed: "+e.message}
+ busy=false;ui();last=performance.now();
+}
+function pickMime(){if(!window.MediaRecorder)return null;
+ for(const m of["video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"])if(MediaRecorder.isTypeSupported(m))return m;return null}
+function ui(){const b=!!rec||busy;$("rec").textContent=b?"Stop recording":"Record video";["size","dur","fps","mbps"].forEach(k=>$("i_"+k).disabled=b)}
+$("rec").onclick=()=>{
+ if(busy){cancel=true;return}
+ if(!rec&&window.VideoEncoder&&window.Mp4Muxer){offline();return}
+ if(rec){rec.mr.stop();return}
+ const mime=pickMime();if(!mime){$("st").textContent="This browser cannot record canvas video. Try a recent Chrome, Edge, Firefox or Safari.";return}
+ let mr;try{mr=new MediaRecorder(cv.captureStream(+P.fps),{mimeType:mime,videoBitsPerSecond:P.mbps*1e6})}catch(e){$("st").textContent="Could not start recorder: "+e.message;return}
+ chunks=[];vid=null;$("dl").disabled=true;
+ mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+ mr.onstop=()=>{const type=mime.split(";")[0];vid={blob:new Blob(chunks,{type}),ext:type.includes("mp4")?"mp4":"webm"};
+  const secs=rec?rec.done?rec.dur:T:0;rec=null;ui();$("dl").disabled=!chunks.length;
+  $("st").textContent="Done: "+fmt(secs)+" of video ready ("+(vid.blob.size/1048576).toFixed(1)+" MB, ."+vid.ext+"). Press Download video."};
+ T=0;rec={mr,start:performance.now(),dur:+P.dur,done:false};mr.start(1000);ui();
+ $("st").textContent="Recording… keep this tab visible. Settings can still be tweaked live, except output options."};
+async function save(name,data){
+ try{const d=window.claude&&await claude.use("downloads");if(d){await d.save({filename:name,data});return}}
+ catch(e){if(e&&e.code==="declined")return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(data);a.download=name;a.click()}
+$("dl").onclick=()=>vid&&save("topo-"+P.seed+"."+vid.ext,vid.blob);
+$("png").onclick=()=>cv.toBlob(b=>b&&save("topo-"+P.seed+".png",b),"image/png");
+$("play").onclick=()=>{playing=!playing;$("play").textContent=playing?"Pause":"Play"};
+$("restart").onclick=()=>{if(!rec)T=0};
+seedNoise(P.seed);paint();requestAnimationFrame(frame);
+</script>
+</body>
+</html>
