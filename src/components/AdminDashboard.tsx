@@ -148,7 +148,7 @@ export const AdminDashboard: React.FC = () => {
                       {demo.genre}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400">Artist: <span className="text-white font-semibold">{demo.artistName}</span> • BPM: {demo.bpm} • Key: {demo.key}</p>
+                  <p className="text-sm text-gray-400">Artist: <span className="text-white font-semibold">{demo.artistName}</span></p>
                 </div>
 
                 <div className="flex items-center gap-3">
