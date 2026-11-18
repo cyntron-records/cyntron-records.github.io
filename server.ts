@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pg from 'pg';
 import { randomInt } from 'node:crypto';
+import fs from 'node:fs';
 import { GoogleGenAI } from '@google/genai';
 
 const { DATABASE_URL, JWT_SECRET, GEMINI_API_KEY } = process.env;
@@ -139,17 +140,35 @@ Reply with JSON only, with keys:
 }
 
 // --- Release tracker (Google Sheets) sync ---
-// Set GOOGLE_SERVICE_ACCOUNT_JSON (the service account key file contents) and TRACKER_SHEET_ID on the server,
-// and share the sheet with the service account's email as an Editor.
-const { GOOGLE_SERVICE_ACCOUNT_JSON, TRACKER_SHEET_ID } = process.env;
+// Give the server the service account key in ONE of these ways (and set TRACKER_SHEET_ID):
+//   - a Render Secret File named google-service-account.json (read from /etc/secrets/), or GOOGLE_SERVICE_ACCOUNT_FILE=<path>
+//   - GOOGLE_SERVICE_ACCOUNT_JSON = the key file contents, or the same contents base64-encoded on one line
+// Share the sheet with the service account's email as an Editor.
+const { TRACKER_SHEET_ID } = process.env;
+function loadServiceAccount(): any | null {
+  const raw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON?.trim();
+  try {
+    if (raw) return JSON.parse(raw.startsWith('{') ? raw : Buffer.from(raw, 'base64').toString('utf8'));
+    const file = process.env.GOOGLE_SERVICE_ACCOUNT_FILE || '/etc/secrets/google-service-account.json';
+    if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    console.error('Could not read the Google service account key:', e);
+  }
+  return null;
+}
+const serviceAccount = loadServiceAccount();
+console.log(
+  serviceAccount && TRACKER_SHEET_ID
+    ? 'Tracker sync: enabled (' + serviceAccount.client_email + ')'
+    : 'Tracker sync: NOT configured (' + (serviceAccount ? '' : 'no service account key found') + (serviceAccount || TRACKER_SHEET_ID ? '' : ', ') + (TRACKER_SHEET_ID ? '' : 'TRACKER_SHEET_ID is not set') + ')');
 const TRACKER_TAB = process.env.TRACKER_SHEET_TAB || 'Sheet1';
 const TAB = "'" + TRACKER_TAB.replace(/'/g, "''") + "'";
-const sheetsEnabled = () => Boolean(GOOGLE_SERVICE_ACCOUNT_JSON && TRACKER_SHEET_ID);
+const sheetsEnabled = () => Boolean(serviceAccount && TRACKER_SHEET_ID);
 let gToken: { value: string; exp: number } | null = null;
 
 async function googleToken(): Promise<string> {
   if (gToken && gToken.exp > Date.now() + 60_000) return gToken.value;
-  const sa = JSON.parse(GOOGLE_SERVICE_ACCOUNT_JSON!);
+  const sa = serviceAccount;
   const assertion = jwt.sign(
     { scope: 'https://www.googleapis.com/auth/spreadsheets', aud: 'https://oauth2.googleapis.com/token' },
     sa.private_key,
@@ -350,6 +369,8 @@ async function main() {
       } catch (e) {
         console.error('Tracker sync failed:', e);
       }
+    } else {
+      console.warn('Tracker sync skipped: the Google key or TRACKER_SHEET_ID is not set on this server.');
     }
     res.json({ ok: true, synced });
   }));
